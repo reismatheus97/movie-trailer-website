@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Fresh Tomatoes!</title>
+
+    <!-- Bootstrap 3 -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css">
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <style type="text/css" media="screen">
+        body {
+            padding-top: 80px;
+        }
+        #trailer .modal-dialog {
+            margin-top: 200px;
+            width: 640px;
+            height: 480px;
+        }
+        .hanging-close {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            z-index: 9001;
+        }
+        #trailer-video {
+            width: 100%;
+            height: 100%;
+        }
+        .movie-tile {
+            margin-bottom: 20px;
+            margin-top: 10px;
+            padding-top: 10px;
+            min-height: 450px;
+        }
+        .movie-tile:hover {
+            background-color: #EEE;
+            cursor: pointer;
+        }
+        .scale-media {
+            padding-bottom: 56.25%;
+            position: relative;
+        }
+        .scale-media iframe {
+            border: none;
+            height: 100%;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            background-color: white;
+        }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+    
+        // Pause the video when the modal is closed
+        $(document).on('click', '.hanging-close, .modal-backdrop, .modal', function (event) {
+            // Remove the src so the player itself gets removed, as this is the only
+            // reliable way to ensure the video stops playing in IE
+            $("#trailer-video-container").empty();
+        });
+        
+        // Start playing the video whenever the trailer modal is opened
+        $(document).on('click', '.movie-tile', function (event) {
+            var trailerYouTubeId = $(this).attr('data-trailer-youtube-id')
+            var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
+            
+            var movieTmdbId = $(this).attr('data-tmdb-movie-id')
+            // fetch themoviedb api para recuperar url do youtube
+            
+            $("#trailer-video-container").empty().append($("<iframe></iframe>", {
+              'id': 'trailer-video',
+              'type': 'text-html',
+              'src': sourceUrl,
+              'frameborder': 0
+            }));
+        });
+        
+        // Animate in the movies when the page loads
+        $(document).ready(function () {
+          $('.movie-tile').hide().first().show("fast", function showNext() {
+            $(this).next("div").show("fast", showNext);
+          });
+        });
+    </script>
+</head>
+
+  <body>
+    <!-- Trailer Video Modal -->
+    <div class="modal" id="trailer">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <a href="#" class="hanging-close" data-dismiss="modal" aria-hidden="true">
+            <img src="https://lh5.ggpht.com/v4-628SilF0HtHuHdu5EzxD7WRqOrrTIDi_MhEG6_qkNtUK5Wg7KPkofp_VJoF7RS2LhxwEFCO1ICHZlc-o_=s0#w=24&h=24"/>
+          </a>
+          <div class="scale-media" id="trailer-video-container">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Page Content -->
+    <div class="container">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">Fresh Tomatoes Movie Trailers</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="348350" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/3IGbjc5ZC5yxim5W0sFING2kdcz.jpg" width="220" height="342">
+    <h2>Solo: A Star Wars Story</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="181808" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/kOVEVeg59E0wsnXmF9nrh6OmWII.jpg" width="220" height="342">
+    <h2>Star Wars: The Last Jedi</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="140607" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/weUSwMdQIa3NaXVzwUoIIcAi85d.jpg" width="220" height="342">
+    <h2>Star Wars: The Force Awakens</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="11" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/btTdmkgIvOi0FFip1sPuZI2oQG6.jpg" width="220" height="342">
+    <h2>Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="330459" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/qjiskwlV1qQzRCjpV0cL9pEMF9a.jpg" width="220" height="342">
+    <h2>Rogue One: A Star Wars Story</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="1893" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/n8V09dDc02KsSN6Q4hC2BX6hN8X.jpg" width="220" height="342">
+    <h2>Star Wars: Episode I - The Phantom Menace</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="1891" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/9SKDSFbaM6LuGqG1aPWN3wYGEyD.jpg" width="220" height="342">
+    <h2>The Empire Strikes Back</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="1892" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/lrJWyjOVjPhghl4KyAMtOepAxs.jpg" width="220" height="342">
+    <h2>Return of the Jedi</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="1894" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/2vcNFtrZXNwIcBgH5e2xXCmVR8t.jpg" width="220" height="342">
+    <h2>Star Wars: Episode II - Attack of the Clones</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="1895" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/tgr5Pdy7ehZYBqBkN2K7Q02xgOb.jpg" width="220" height="342">
+    <h2>Star Wars: Episode III - Revenge of the Sith</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="181812" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/yVYTFvIiKyr6vsrPw3o5C6t2eoL.jpg" width="220" height="342">
+    <h2>Star Wars: Episode IX</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="12180" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/xd6yhmtS6mEURZLwUDT5raEMbf.jpg" width="220" height="342">
+    <h2>Star Wars: The Clone Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="1884" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/nBj50ywoyBPHlXXIByIxzgjPWPZ.jpg" width="220" height="342">
+    <h2>The Ewok Adventure</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="74849" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/sNxgvnswaahOA3mdkjcuYYpLi7i.jpg" width="220" height="342">
+    <h2>The Star Wars Holiday Special</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="42979" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/kWKspQ7YiQ82xXM1jVbIbqh5OyV.jpg" width="220" height="342">
+    <h2>Robot Chicken: Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="287663" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/sgZvwdGuqOfbJTfUNq5lh9B4HQy.jpg" width="220" height="342">
+    <h2>Star Wars Rebels: Spark of Rebellion</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="51888" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/gsKEyIOJzNgLdbGjTnFds8hI4rV.jpg" width="220" height="342">
+    <h2>Robot Chicken: Star Wars Episode III</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="70608" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/cIKQu7UlXAv94guz14Zij0Xm0tx.jpg" width="220" height="342">
+    <h2>Lego Star Wars: The Padawan Menace</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="42982" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/kTCaL5VFwQr11P8dZpb0yzk4oQy.jpg" width="220" height="342">
+    <h2>Robot Chicken: Star Wars Episode II</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="KYz2wyBy3kc data-tmdb-movie-id="332479" " data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/jwUexLOEBMFMbBoKzK4AT7hQYDw.jpg" width="220" height="342">
+    <h2>Star Wars: TIE Fighter</h2>
+</div>
+
+    </div>
+  </body>
+</html>

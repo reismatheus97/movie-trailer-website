@@ -10,12 +10,24 @@ main_page_head = '''
 <head>
     <meta charset="utf-8">
     <title>Fresh Tomatoes!</title>
+    
+    <script type="text/javascript" charset="utf-8"> 
+        // API key to have access to "TMDb" API.
+        // This is NOT a comercial use about the API and all the credits
+        // belongs to TMDb, Inc. (https://www.themoviedb.org/).
+        // This key is registered to 'reismatheus97' and can't be used outside
+        // from this project and his purposes.
 
+        const API_KEY = "394f3a8e67543449583d84bcef8634a0"
+    </script>
+    
     <!-- Bootstrap 3 -->
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css">
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+    
     <style type="text/css" media="screen">
         body {
             padding-top: 80px;
@@ -60,7 +72,6 @@ main_page_head = '''
         }
     </style>
     <script type="text/javascript" charset="utf-8">
-    
         // Pause the video when the modal is closed
         $(document).on('click', '.hanging-close, .modal-backdrop, .modal', function (event) {
             // Remove the src so the player itself gets removed, as this is the only
@@ -70,18 +81,22 @@ main_page_head = '''
         
         // Start playing the video whenever the trailer modal is opened
         $(document).on('click', '.movie-tile', function (event) {
-            var trailerYouTubeId = $(this).attr('data-trailer-youtube-id')
-            var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
-            
             var movieTmdbId = $(this).attr('data-tmdb-movie-id')
-            // fetch themoviedb api para recuperar url do youtube
             
-            $("#trailer-video-container").empty().append($("<iframe></iframe>", {
-              'id': 'trailer-video',
-              'type': 'text-html',
-              'src': sourceUrl,
-              'frameborder': 0
-            }));
+            // Fetch TMDb api to get the youtube trailer id.
+            axios.get(`https://api.themoviedb.org/3/movie/${movieTmdbId}/videos?api_key=${API_KEY}`, { method: 'GET' })
+            .then( response => {
+                return response.data.results[0].key 
+            })
+            .then( trailerYouTubeId => {
+                var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
+                $("#trailer-video-container").empty().append($("<iframe></iframe>", {
+                    'id': 'trailer-video',
+                    'type': 'text-html',
+                    'src': sourceUrl,
+                    'frameborder': 0
+                }));                    
+            })
         });
         
         // Animate in the movies when the page loads
@@ -90,6 +105,7 @@ main_page_head = '''
             $(this).next("div").show("fast", showNext);
           });
         });
+        
     </script>
 </head>
 '''
@@ -128,10 +144,9 @@ main_page_content = '''
 </html>
 '''
 
-
 # A single movie entry html template
 movie_tile_content = '''
-<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="{trailer_youtube_id} data-tmdb-movie-id="{movie_id}" " data-toggle="modal" data-target="#trailer">
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="{movie_id}" data-toggle="modal" data-target="#trailer">
     <img src="{poster_image_url}" width="220" height="342">
     <h2>{movie_title}</h2>
 </div>
@@ -141,7 +156,7 @@ movie_tile_content = '''
 def create_movie_tiles_content(movies):
     # The HTML content for this section of the page
     content = ''
-    trailer_youtube_id = ''
+    # trailer_youtube_id = ''
 
     for movie in movies:
         # Extract the youtube ID from the url
@@ -158,7 +173,7 @@ def create_movie_tiles_content(movies):
             movie_id=movie.movie_id,
             movie_title=movie.movie_title,
             poster_image_url=movie.poster_image_url,
-            trailer_youtube_id=trailer_youtube_id
+            # trailer_youtube_id=trailer_youtube_id
         )
     return content
 

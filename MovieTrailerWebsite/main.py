@@ -16,7 +16,7 @@ starWarsMoviesArray = []
 
 # A movie array to be used when, for some reason,
 # the results from "TMDb" API are not returned.
-localMovieArray = movie.Movie.get_local_movie_array()
+localMovieArray = movie.get_local_movie_array()
 
 # Fetch "TMDb" API with the API KEY with query = "Star Wars".
 response = requests.get("https://api.themoviedb.org/3/search/movie?api_key=" +
@@ -26,17 +26,19 @@ response = requests.get("https://api.themoviedb.org/3/search/movie?api_key=" +
 # Parse the response to a JSON.
 responseJson = json.loads(response.content)
 
+# Creating movie instances with the response results.
 for item in responseJson['results']:
     movie_id = item['id']
-    # Removing non-ASCII chars.
-    movie_title = item['title'].encode("ascii", errors="ignore").decode()
+    movie_title = item['title'].encode("ascii", errors="ignore").decode()  # Removing non-ASCII chars.
     movie_storyline = item['overview']
     movie_popularity = item['popularity']
     poster_image_url = 'https://image.tmdb.org/t/p/w300' + item['poster_path']
-    youtube_url = 'https://www.youtube.com/watch?v=KYz2wyBy3kc'
 
-    movieInstance = movie.Movie(movie_id, movie_title, movie_storyline, movie_popularity, poster_image_url, youtube_url)
+    movieInstance = movie.Movie(movie_id, movie_title, movie_storyline, movie_popularity, poster_image_url, "")
     starWarsMoviesArray.append(movieInstance)
 
+# Sort the movie array by the key "movie_popularity"
 starWarsMoviesArray = sorted(starWarsMoviesArray, key=lambda k: k['movie_popularity'], reverse=True)
+
+# Open the movie trailer website's page.
 fresh_tomatoes.open_movies_page(starWarsMoviesArray)

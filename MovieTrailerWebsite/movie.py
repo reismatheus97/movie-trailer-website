@@ -10,3 +10,34 @@ class Movie:
     def __getitem__(self, item):
         return getattr(self, item)
 
+    def get_local_movie_array(self):
+        a = self.Movie(0,
+                       "Toy Story",
+                       "A story about a guy and his toys that come to life",
+                       0,
+                       "https://images-na.ssl-images-amazon.com/images/I/91q0UP6%2BUTL._SY879_.jpg",
+                       "https://www.youtube.com/watch?v=KYz2wyBy3kc")
+
+        b = self.Movie(1,
+                       "Avatar",
+                       "A marine on an alien planet",
+                       0,
+                       "https://m.media-amazon.com/images/M/MV5BMTYwOTEwNjAzMl5BMl5BanBnXkFtZTcwODc5MTUwMw@@._V1_.jpg",
+                       "https://www.youtube.com/watch?v=WNW9Wz7k4pM")
+
+        x = self.Movie(2,
+                       "Toy Story",
+                       "A story about a guy and his toys that come to life",
+                       0,
+                       "https://images-na.ssl-images-amazon.com/images/I/91q0UP6%2BUTL._SY879_.jpg",
+                       "https://www.youtube.com/watch?v=KYz2wyBy3kc")
+
+        y = self.Movie(3,
+                       "Avatar",
+                       "A marine on an alient planet",
+                       0,
+                       "https://m.media-amazon.com/images/M/MV5BMTYwOTEwNjAzMl5BMl5BanBnXkFtZTcwODc5MTUwMw@@._V1_.jpg",
+                       "https://www.youtube.com/watch?v=WNW9Wz7k4pM")
+
+        return [a, b, x, y]
+

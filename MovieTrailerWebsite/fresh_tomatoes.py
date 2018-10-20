@@ -9,7 +9,7 @@ main_page_head = '''
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Fresh Tomatoes!</title>
+    <title>Star Wars Movie Trailer Website</title>
     
     <script type="text/javascript" charset="utf-8"> 
         // API key to have access to "TMDb" API.
@@ -48,10 +48,10 @@ main_page_head = '''
             height: 100%;
         }
         .movie-tile {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             margin-top: 10px;
             padding-top: 10px;
-            min-height: 450px;
+            min-height: 520px;
         }
         .movie-tile:hover {
             background-color: #EEE;
@@ -70,8 +70,12 @@ main_page_head = '''
             top: 0;
             background-color: white;
         }
+        .error-msg {
+            text-align: center;
+        }
     </style>
     <script type="text/javascript" charset="utf-8">
+    
         // Pause the video when the modal is closed
         $(document).on('click', '.hanging-close, .modal-backdrop, .modal', function (event) {
             // Remove the src so the player itself gets removed, as this is the only
@@ -86,24 +90,42 @@ main_page_head = '''
             // Fetch TMDb api to get the youtube trailer id.
             axios.get(`https://api.themoviedb.org/3/movie/${movieTmdbId}/videos?api_key=${API_KEY}`, { method: 'GET' })
             .then( response => {
-                return response.data.results[0].key 
+                let results = response
+                    .data
+                    .results
+                    .sort(function (a, b) { // Sort results increasingly
+                        if (a.type > b.type) {
+                            return -1;
+                        }
+                        if (a.type < b.name) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                
+                return results[0].key
             })
-            .then( trailerYouTubeId => {
-                var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
-                $("#trailer-video-container").empty().append($("<iframe></iframe>", {
-                    'id': 'trailer-video',
-                    'type': 'text-html',
-                    'src': sourceUrl,
-                    'frameborder': 0
-                }));                    
-            })
-        });
-        
-        // Animate in the movies when the page loads
-        $(document).ready(function () {
-          $('.movie-tile').hide().first().show("fast", function showNext() {
-            $(this).next("div").show("fast", showNext);
-          });
+            .catch( err => {
+                $("#trailer-video-container").empty().append($("<h3 class='error-msg'>No trailer available for this video. :( </h3>"))
+                debugger;
+                console.warn("Failed on fetch", err)
+                return 0;
+            }).then( trailerYouTubeId => {
+                if (trailerYouTubeId != 0) {
+                    var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
+                    $("#trailer-video-container").empty().append($("<iframe></iframe>", {
+                        'id': 'trailer-video',
+                        'type': 'text-html',
+                        'src': sourceUrl,
+                        'frameborder': 0
+                    }));
+                }                    
+            }).catch(
+                err => {
+                    console.warn("Failed on fetch youtube trailer", err)
+                    $("#trailer-video-container").empty().append($("<h3 class='error-msg'>No trailer available for this video. :( </h3>"))
+                }
+            )
         });
         
     </script>
@@ -131,14 +153,26 @@ main_page_content = '''
     <div class="container">
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="#">Fresh Tomatoes Movie Trailers</a>
+          <div class="navbar-header" style="width: 100%;">
+            <a class="navbar-brand" href="#">The Star Wars Collection Trailers</a>
+            <div style="float: right;">
+                <a class="navbar-brand" 
+                   href="https://www.themoviedb.org/"
+                   style="float: right; text-decoration: underline;">
+                     Powered by TheMovieDB API.
+                </a>
+            </div>
           </div>
+          
         </div>
       </div>
     </div>
-    <div class="container">
-      {movie_tiles}
+    <div class="container movies-container">
+        {movie_tiles}
+    </div>
+    <hr/>
+    <div style="text-align: center;">
+        <h2><a href="https://www.starwars.com/">The official Star Wars site.</a></h2>
     </div>
   </body>
 </html>
@@ -152,28 +186,18 @@ movie_tile_content = '''
 </div>
 '''
 
-
 def create_movie_tiles_content(movies):
     # The HTML content for this section of the page
     content = ''
     # trailer_youtube_id = ''
 
-    for movie in movies:
-        # Extract the youtube ID from the url
-        youtube_id_match = re.search(
-            r'(?<=v=)[^&#]+', movie.trailer_youtube_url)
-        youtube_id_match = youtube_id_match or re.search(
-            r'(?<=be/)[^&#]+', movie.trailer_youtube_url)
-        trailer_youtube_id = (youtube_id_match.group(0) if youtube_id_match
-                              else None)
+    for index, movie in enumerate(movies):
 
-    for movie in movies:
         # Append the tile for the movie with its content filled in
         content += movie_tile_content.format(
             movie_id=movie.movie_id,
             movie_title=movie.movie_title,
-            poster_image_url=movie.poster_image_url,
-            # trailer_youtube_id=trailer_youtube_id
+            poster_image_url=movie.poster_image_url
         )
     return content
 

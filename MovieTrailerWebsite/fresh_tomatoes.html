@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Fresh Tomatoes!</title>
+    <title>Star Wars Movie Trailer Website</title>
     
     <script type="text/javascript" charset="utf-8"> 
         // API key to have access to "TMDb" API.
@@ -42,10 +42,10 @@
             height: 100%;
         }
         .movie-tile {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             margin-top: 10px;
             padding-top: 10px;
-            min-height: 450px;
+            min-height: 520px;
         }
         .movie-tile:hover {
             background-color: #EEE;
@@ -64,8 +64,13 @@
             top: 0;
             background-color: white;
         }
+        .error-msg {
+            text-align: center;
+            color: red;
+        }
     </style>
     <script type="text/javascript" charset="utf-8">
+    
         // Pause the video when the modal is closed
         $(document).on('click', '.hanging-close, .modal-backdrop, .modal', function (event) {
             // Remove the src so the player itself gets removed, as this is the only
@@ -76,28 +81,46 @@
         // Start playing the video whenever the trailer modal is opened
         $(document).on('click', '.movie-tile', function (event) {
             var movieTmdbId = $(this).attr('data-tmdb-movie-id')
-            // fetch themoviedb api para recuperar url do youtube
-
+            
+            // Fetch TMDb api to get the youtube trailer id.
             axios.get(`https://api.themoviedb.org/3/movie/${movieTmdbId}/videos?api_key=${API_KEY}`, { method: 'GET' })
             .then( response => {
-                return response.data.results[0].key 
+                let results = response
+                    .data
+                    .results
+                    .sort(function (a, b) { // Sort results increasingly
+                        if (a.type > b.type) {
+                            return -1;
+                        }
+                        if (a.type < b.name) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                
+                return results[0].key
             })
-            .then( trailerYouTubeId => {
-                var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
-                $("#trailer-video-container").empty().append($("<iframe></iframe>", {
-                    'id': 'trailer-video',
-                    'type': 'text-html',
-                    'src': sourceUrl,
-                    'frameborder': 0
-                }));                    
-            })
-        });
-        
-        // Animate in the movies when the page loads
-        $(document).ready(function () {
-          $('.movie-tile').hide().first().show("fast", function showNext() {
-            $(this).next("div").show("fast", showNext);
-          });
+            .catch( err => {
+                $("#trailer-video-container").empty().append($("<h3 class='error-msg'>No trailer available for this video. :( </h3>"))
+                debugger;
+                console.warn("Failed on fetch", err)
+                return 0;
+            }).then( trailerYouTubeId => {
+                if (trailerYouTubeId != 0) {
+                    var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
+                    $("#trailer-video-container").empty().append($("<iframe></iframe>", {
+                        'id': 'trailer-video',
+                        'type': 'text-html',
+                        'src': sourceUrl,
+                        'frameborder': 0
+                    }));
+                }                    
+            }).catch(
+                err => {
+                    console.warn("Failed on fetch youtube trailer", err)
+                    $("#trailer-video-container").empty().append($("<h3 class='error-msg'>No trailer available for this video. :( </h3>"))
+                }
+            )
         });
         
     </script>
@@ -121,14 +144,22 @@
     <div class="container">
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="#">Fresh Tomatoes Movie Trailers</a>
+          <div class="navbar-header" style="width: 100%;">
+            <a class="navbar-brand" href="#">The Star Wars Collection Trailers</a>
+            <div style="float: right;">
+                <a class="navbar-brand" 
+                   href="https://www.themoviedb.org/"
+                   style="float: right; text-decoration: underline;">
+                     Powered by TheMovieDB API.
+                </a>
+            </div>
           </div>
+          
         </div>
       </div>
     </div>
-    <div class="container">
-      
+    <div class="container movies-container">
+        
 <div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="348350" data-toggle="modal" data-target="#trailer">
     <img src="https://image.tmdb.org/t/p/w300/3IGbjc5ZC5yxim5W0sFING2kdcz.jpg" width="220" height="342">
     <h2>Solo: A Star Wars Story</h2>
@@ -154,14 +185,14 @@
     <h2>Rogue One: A Star Wars Story</h2>
 </div>
 
-<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="1893" data-toggle="modal" data-target="#trailer">
-    <img src="https://image.tmdb.org/t/p/w300/n8V09dDc02KsSN6Q4hC2BX6hN8X.jpg" width="220" height="342">
-    <h2>Star Wars: Episode I - The Phantom Menace</h2>
-</div>
-
 <div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="1891" data-toggle="modal" data-target="#trailer">
     <img src="https://image.tmdb.org/t/p/w300/9SKDSFbaM6LuGqG1aPWN3wYGEyD.jpg" width="220" height="342">
     <h2>The Empire Strikes Back</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="1893" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/n8V09dDc02KsSN6Q4hC2BX6hN8X.jpg" width="220" height="342">
+    <h2>Star Wars: Episode I - The Phantom Menace</h2>
 </div>
 
 <div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="1892" data-toggle="modal" data-target="#trailer">
@@ -169,19 +200,14 @@
     <h2>Return of the Jedi</h2>
 </div>
 
-<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="1894" data-toggle="modal" data-target="#trailer">
-    <img src="https://image.tmdb.org/t/p/w300/2vcNFtrZXNwIcBgH5e2xXCmVR8t.jpg" width="220" height="342">
-    <h2>Star Wars: Episode II - Attack of the Clones</h2>
-</div>
-
 <div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="1895" data-toggle="modal" data-target="#trailer">
     <img src="https://image.tmdb.org/t/p/w300/tgr5Pdy7ehZYBqBkN2K7Q02xgOb.jpg" width="220" height="342">
     <h2>Star Wars: Episode III - Revenge of the Sith</h2>
 </div>
 
-<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="12180" data-toggle="modal" data-target="#trailer">
-    <img src="https://image.tmdb.org/t/p/w300/xd6yhmtS6mEURZLwUDT5raEMbf.jpg" width="220" height="342">
-    <h2>Star Wars: The Clone Wars</h2>
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="1894" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/2vcNFtrZXNwIcBgH5e2xXCmVR8t.jpg" width="220" height="342">
+    <h2>Star Wars: Episode II - Attack of the Clones</h2>
 </div>
 
 <div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="181812" data-toggle="modal" data-target="#trailer">
@@ -189,9 +215,24 @@
     <h2>Star Wars: Episode IX</h2>
 </div>
 
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="12180" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/xd6yhmtS6mEURZLwUDT5raEMbf.jpg" width="220" height="342">
+    <h2>Star Wars: The Clone Wars</h2>
+</div>
+
 <div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="74849" data-toggle="modal" data-target="#trailer">
     <img src="https://image.tmdb.org/t/p/w300/sNxgvnswaahOA3mdkjcuYYpLi7i.jpg" width="220" height="342">
     <h2>The Star Wars Holiday Special</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="10372" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/qmK6nRnyF2uMX0JzoNByfchyl2L.jpg" width="220" height="342">
+    <h2>Ewoks: The Battle for Endor</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="1884" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/nBj50ywoyBPHlXXIByIxzgjPWPZ.jpg" width="220" height="342">
+    <h2>The Ewok Adventure</h2>
 </div>
 
 <div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="42979" data-toggle="modal" data-target="#trailer">
@@ -204,19 +245,9 @@
     <h2>Star Wars Rebels: Spark of Rebellion</h2>
 </div>
 
-<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="42982" data-toggle="modal" data-target="#trailer">
-    <img src="https://image.tmdb.org/t/p/w300/kTCaL5VFwQr11P8dZpb0yzk4oQy.jpg" width="220" height="342">
-    <h2>Robot Chicken: Star Wars Episode II</h2>
-</div>
-
-<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="51888" data-toggle="modal" data-target="#trailer">
-    <img src="https://image.tmdb.org/t/p/w300/gsKEyIOJzNgLdbGjTnFds8hI4rV.jpg" width="220" height="342">
-    <h2>Robot Chicken: Star Wars Episode III</h2>
-</div>
-
-<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="332479" data-toggle="modal" data-target="#trailer">
-    <img src="https://image.tmdb.org/t/p/w300/jwUexLOEBMFMbBoKzK4AT7hQYDw.jpg" width="220" height="342">
-    <h2>Star Wars: TIE Fighter</h2>
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="136406" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/vHGgKAkwydQjpS4TqktCTwGtKpy.jpg" width="220" height="342">
+    <h2>Lego Star Wars: The Empire Strikes Out</h2>
 </div>
 
 <div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="70608" data-toggle="modal" data-target="#trailer">
@@ -224,11 +255,515 @@
     <h2>Lego Star Wars: The Padawan Menace</h2>
 </div>
 
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="51888" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/gsKEyIOJzNgLdbGjTnFds8hI4rV.jpg" width="220" height="342">
+    <h2>Robot Chicken: Star Wars Episode III</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="550342" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/zBtw3mZ8rT6zcmSaHXJA5PZEBrK.jpg" width="220" height="342">
+    <h2>TK630 - A Star Wars Fan Film</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="42982" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/kTCaL5VFwQr11P8dZpb0yzk4oQy.jpg" width="220" height="342">
+    <h2>Robot Chicken: Star Wars Episode II</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="76180" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/nvYb5G5p94dERKNrALKFNSdHS4O.jpg" width="220" height="342">
+    <h2>Empire of Dreams: The Story of the Star Wars Trilogy</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="332479" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/jwUexLOEBMFMbBoKzK4AT7hQYDw.jpg" width="220" height="342">
+    <h2>Star Wars: TIE Fighter</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="337755" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/pxMAPq5R7o3zQh5DmJ76cW5vVIu.jpg" width="220" height="342">
+    <h2>Star Wars Rebels: The Siege of Lothal</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="20787" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/htLAdxXI46DLH1Bblovk0rg4MpQ.jpg" width="220" height="342">
+    <h2>The Man Who Saves The World</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="81233" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/lqtQIzkgqhhtefRnd5HBlErHlT4.jpg" width="220" height="342">
+    <h2>LEGO Star Wars: The Quest for R2-D2</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="393047" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/A46cBGRKdF6pkL7KEAJ590N9pxF.jpg" width="220" height="342">
+    <h2>Lego Star Wars: The Yoda Chronicles - The Phantom Clone</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="553502" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/cSvMp3DSKeNHmIcHJ8gon97CzHD.jpg" width="220" height="342">
+    <h2>Star Wars: Episode IV - A New Hope</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="541633" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/gnpMy1d9F4OSindDpyrwfElfYPG.jpg" width="220" height="342">
+    <h2>Star Wars: Episode IV - A New Hope - Special Edition</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="369030" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/3qvQuOY8lnonKpaFndEwBj12CMX.jpg" width="220" height="342">
+    <h2>Lego Star Wars: The Yoda Chronicles: Episode IV: Escape From The Jedi Temple</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="277499" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/o6PEiBn1c8usLYEGRHYixZzZ3aH.jpg" width="220" height="342">
+    <h2>From Star Wars to Star Wars: The Story of Industrial Light & Magic</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="161704" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/vyCqT1crsFOAMzxCmOCym2QG3Wx.jpg" width="220" height="342">
+    <h2>Doraemon: Nobita's Little Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="358536" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/S66RKnkelkSeqjJwdt0SnrO7L6.jpg" width="220" height="342">
+    <h2>When Star Wars Ruled the World</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="72694" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/WgsInarGqxj5a33H1oO1IJACDU.jpg" width="220" height="342">
+    <h2>The Making of 'Star Wars'</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="392216" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/c1C8V9OmzRAyTukldTbImyGayu0.jpg" width="220" height="342">
+    <h2>Phineas and Ferb: Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="431575" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/qGT8XBRhJCgTLvUmAcw0puG5yAp.jpg" width="220" height="342">
+    <h2>The Rogue One: A Star Wars Toy Story</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="496786" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/uHYjVNMmiDSULekc12EfI5du50i.jpg" width="220" height="342">
+    <h2>Eternal: A Star Wars Fan Film</h2>
+</div>
+
 <div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="128295" data-toggle="modal" data-target="#trailer">
     <img src="https://image.tmdb.org/t/p/w300/lwbUfngX33wbbUUEbxxFULtPo5R.jpg" width="220" height="342">
     <h2>Star Wars: The Legacy Revealed</h2>
 </div>
 
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="376798" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/xVeTl156TdJsj7Hsgtqar8ygX1T.jpg" width="220" height="342">
+    <h2>Star Wars: Evolution of the Lightsaber Duel</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="184902" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/on2dAF51xJv2aIJu9cRFn5ucd9Y.jpg" width="220" height="342">
+    <h2>Star Wars The Clone Wars: Darth Maul Returns</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="553974" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/cSvMp3DSKeNHmIcHJ8gon97CzHD.jpg" width="220" height="342">
+    <h2>Star Wars IV: A New Hope</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="154452" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/mEkPSwbhy1WeMGM1GnPoCLPZFfA.jpg" width="220" height="342">
+    <h2>Star Wars Tech</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="543563" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/eGiTLR8CxxX7D6RhaVmiVj7btGD.jpg" width="220" height="342">
+    <h2>Star Wars: Revisited</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="465882" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Star Wars Rebels: The Machine in the Ghost</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="253150" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/p4XtRTZOHoDnCheNX1e1mruperF.jpg" width="220" height="342">
+    <h2>Plastic Galaxy: The Story of Star Wars Toys</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="79158" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/t0SfMeHDylGCxWYWgklekD4olHn.jpg" width="220" height="342">
+    <h2>Lego Star Wars: Bombad Bounty</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="81234" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/yjp7x9PKCrmDtXxVQJiDFeV4ntG.jpg" width="220" height="342">
+    <h2>Lego Star Wars: Revenge of The Brick</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="248931" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/rJBotAXWHZOQP3hkG5nvFscHGeO.jpg" width="220" height="342">
+    <h2>Star Wars: Droids - The Great Heep</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="513761" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/fmb9IauZnCsKek1UTeZ7amAWQSU.jpg" width="220" height="342">
+    <h2>Star Wars: The Last Jedi - Scene Breakdowns</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="418363" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/zJzTpfdmPVKdZtoAjJqQlLPTZea.jpg" width="220" height="342">
+    <h2>Star Wars Rebels: Steps Into Shadow</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="282315" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/a6fQIcBnTyANRAj7TKCPkPK8wMX.jpg" width="220" height="342">
+    <h2>Star Wars: Bounty Hunter - Beyond The Game</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="411511" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/uIqOMze5C6VAMougq0zXuHuFJmh.jpg" width="220" height="342">
+    <h2>Star Wars: Generations</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="292410" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/sc9X6xQ78PpHwHRXjoD3Yg52FGQ.jpg" width="220" height="342">
+    <h2>Tales from the Endor Woods</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="551416" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Star wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="521298" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/50Xf9wCG3OK2xvaEnZO7ZcmlPCa.jpg" width="220" height="342">
+    <h2>Star Wars Nothing But Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="432134" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/5FqjtzTlEv6vqVlAMFeyEzZMRmo.jpg" width="220" height="342">
+    <h2>Star Wars: Heroes & Villains</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="526653" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/xl2e0hQiwXHumaNUb2skSmS6Jzf.jpg" width="220" height="342">
+    <h2>The Unauthorized 'Star Wars' Story</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="435365" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/4UrrUoVQ1Ft6g6uI4FQN6JrJwSQ.jpg" width="220" height="342">
+    <h2>The Story of Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="405572" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/gy04VLh5oMmpD1YwBgBqzFYbG0A.jpg" width="220" height="342">
+    <h2>Ken Loach's Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="479257" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/tpeNZ7mWdaeFJs2bej0Wv4NAgY6.jpg" width="220" height="342">
+    <h2>Star Wars: Crapisode I</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="378386" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/65jlytLScOl2pEzm1ky6aagVreR.jpg" width="220" height="342">
+    <h2>Star Wars: Greatest Moments</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="81418" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/qf6qlr8zqe8Pqrk2y9RcC43htde.jpg" width="220" height="342">
+    <h2>Star Wars: Deleted Magic</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="432038" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/pj3XjbPvQQRVGvcWsGx0jcFZVIA.jpg" width="220" height="342">
+    <h2>Star Wars Downunder</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="432052" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/wexZ1QJToLiOK9aZWJWDiCO9udF.jpg" width="220" height="342">
+    <h2>Saving Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="496538" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/gf4VMJpb9e59Z3Ns8T66Oqtclqo.jpg" width="220" height="342">
+    <h2>Star Wars: Emergence</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="501244" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/oMMkmBbwgjbOpPLuIZnNsBAfyUs.jpg" width="220" height="342">
+    <h2>Star wars 40 ans</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="512517" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/gQKnhKUiw6He4UFLCBf54Ae9UyX.jpg" width="220" height="342">
+    <h2>Star Wars Bonus Material</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="515773" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Star Wars Spoofs</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="496790" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/jF2bIGJXPG9zl0f7I8rpyjW6Qmu.jpg" width="220" height="342">
+    <h2>Star Wars: Destroyer</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="549991" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/v4DaCZm9XkeNNHvvptucseglHMY.jpg" width="220" height="342">
+    <h2>Star Wars: Revelations</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="493120" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/ifAjx5C7m9mmIdxYITRLxLDeuG5.jpg" width="220" height="342">
+    <h2>Star Wars - Stormtrooper Target Practice</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="72448" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/nP4WoJHiTvdULdlrLh7qFCp68wM.jpg" width="220" height="342">
+    <h2>Star Wars: A Musical Journey</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="527300" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Star Wars: Master of Shadow</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="527314" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Star Wars: Reys Origin Story</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="528694" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>K-1 Star Wars '96</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="538556" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/q5IXaVSSIYJ6Qw9eKOoFveQAszV.jpg" width="220" height="342">
+    <h2>Star Wars: The Last Hope</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="351651" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/pNLtE06Yo0FxO8RSV40MlnnzvWO.jpg" width="220" height="342">
+    <h2>The Untitled Star Wars Mockumentary</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="412561" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/7xSt0PMwWaiML0zP9tKqueh96DA.jpg" width="220" height="342">
+    <h2>The Secret of Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="415954" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/uLJayH9bpWyTQGLHlTpIP3ZqFmX.jpg" width="220" height="342">
+    <h2>Star Wars: The Alabine Armor</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="465886" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Star Wars Rebels: Art Attack</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="482287" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/pOIccovMDv11T7GAVR0C0d3vi7G.jpg" width="220" height="342">
+    <h2>The Stars of Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="363132" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/qG6Ckwz1JywBOvyWtyPaKjYw1GZ.jpg" width="220" height="342">
+    <h2>Star Wars Begins: A Filmumentary</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="368729" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/cbJiI4UoufvhpBz6fywmOqVRlRt.jpg" width="220" height="342">
+    <h2>Star Wars: The Holo Xperience</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="372906" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/vwBTH4Dr9vmE1HStlQL4wz3mVnV.jpg" width="220" height="342">
+    <h2>Star Wars: A Definitive History</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="486000" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/s7TZBwwdpq0DbuEWG3CRVdf2lUR.jpg" width="220" height="342">
+    <h2>The Characters of Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="493157" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Lego Star Wars Jedi Outcast</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="102817" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/5jbEXq7SmyahaYWHQoyO6HVUPjj.jpg" width="220" height="342">
+    <h2>Quentin Tarantino's Star Wars</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="436621" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Star Wars : L'incroyable Lgende</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="497608" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/6QojMFqKCAm0mQwPMtigF3SUq5l.jpg" width="220" height="342">
+    <h2>Star Wars: Smuggler's Run</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="292404" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/sc9X6xQ78PpHwHRXjoD3Yg52FGQ.jpg" width="220" height="342">
+    <h2>The Haunted Village</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="294822" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/tEacV6cPxe9nznaMkoZp3A6rAUQ.jpg" width="220" height="342">
+    <h2>Hollywood Rivals: Star Wars vs. Star Trek</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="471393" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Untitled Star Wars/Obi-Wan Kenobi Project</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="426860" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Pro Wrestling USA: Star Wars 1985</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="357450" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/aTviyMj2UTNhGds3eIiR3f7A2Iq.jpg" width="220" height="342">
+    <h2>Star Wars: The New Republic Anthology</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="372909" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/zsGnNy6Xm8XzoeLWkb2AwT7GczB.jpg" width="220" height="342">
+    <h2>How Star Wars Changed the World</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="425836" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Untitled Star Wars/Boba Fett Project</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="507052" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/q41hKQWdZVoGx4aNd8Ul2oFeaBW.jpg" width="220" height="342">
+    <h2>Star Wars: The Force of Sound</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="527333" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/esigWsduIwHdDypU6BNH6muEdo6.jpg" width="220" height="342">
+    <h2>Star Wars: Beyond the Dune Sea</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="527340" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Star Wars: The Han Solo Chronicles</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="486215" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Untitled Rian Johnson Star Wars Project #1</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="425836" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Untitled Star Wars/Boba Fett Project</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="486215" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Untitled Rian Johnson Star Wars Project #1</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="486216" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Untitled Rian Johnson Star Wars Project #2</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="486217" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Untitled Rian Johnson Star Wars Project #3</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="207949" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/x1NG57tcSH4ImqLZqgnpASsLyOL.jpg" width="220" height="342">
+    <h2>The Pirates and the Prince</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="207950" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/uSv5RT8NScJ7Doy2pZhXiAmXNDR.jpg" width="220" height="342">
+    <h2>Treasure of the Hidden Planet</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="454606" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Star Wars: The Force Awakens - On Set</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="215113" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/w4he81pLkBebvXxNrv15JcQLAbC.jpg" width="220" height="342">
+    <h2>Star Wars: Wrath of the Mandalorian</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="533716" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Star Wars: Episode III.VIII: Rise of the Troopers</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="479310" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/jNyRTohZOID3SYkjT7b3uvEUCyP.jpg" width="220" height="342">
+    <h2>Star Wars Rebels: Heroes of Mandalore</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="496039" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/3rYUP6J4n2bIoJKwbgw8a4HPvYW.jpg" width="220" height="342">
+    <h2>Days Past - A Star Wars Fan Film</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="485997" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/8TKZNYSI62UxBxhrhDeFaiYbQki.jpg" width="220" height="342">
+    <h2>Star Wars: The Magic & the Mystery</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="510373" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>Untitled Star Wars/David Benioff & D.B. Weiss Project</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="366224" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/1lAXLlTcspRg7UThcByVSGUnrfZ.jpg" width="220" height="342">
+    <h2>Lego Star Wars: The Yoda Chronicles - Menace of the Sith</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="509770" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/xtDalKKBuJ9X8kG1WpKe7RfH10U.jpg" width="220" height="342">
+    <h2>The Star Wars Suite  The Danish National Symphony Orchestra</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="515580" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/7nCnXxIqwETBDqpThq8ii3naKCC.jpg" width="220" height="342">
+    <h2>How Star Wars Was Saved in the Edit</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="521657" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300None" width="220" height="342">
+    <h2>The Last Padawan: A Short Star Wars Story</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="359414" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/ckbT4SbKNjOMS7iVwnhEtlG08V4.jpg" width="220" height="342">
+    <h2>Lego Star Wars: The Complete Brick Saga So Far</h2>
+</div>
+
+<div class="col-md-6 col-lg-4 movie-tile text-center" data-tmdb-movie-id="503348" data-toggle="modal" data-target="#trailer">
+    <img src="https://image.tmdb.org/t/p/w300/ej8Ji5uiz7lt7yBIy2gBGBIqpvP.jpg" width="220" height="342">
+    <h2>Star Wars Episode III: Revenge of the Sith Special Edition</h2>
+</div>
+
+    </div>
+    <hr/>
+    <div style="text-align: center;">
+        <h2><a href="https://www.starwars.com/">The official Star Wars site.</a></h2>
     </div>
   </body>
 </html>

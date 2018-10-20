@@ -52,4 +52,4 @@ for currentPage in range(1, totalPages):
 starWarsMoviesArray = sorted(starWarsMoviesArray, key=lambda k: k['movie_popularity'], reverse=True)
 
 # Open the movie trailer website's page.
-fresh_tomatoes.open_movies_page(starWarsMoviesArray, totalPages)
+fresh_tomatoes.open_movies_page(starWarsMoviesArray)

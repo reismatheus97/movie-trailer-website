@@ -8,18 +8,18 @@ Python 2.7.9
 In the terminal:\
 
 1- Clone the repo to a folder: \
-```$ git clone https://github.com/reismatheus97/movie-trailer-website.git``` \
+```$ git clone https://github.com/reismatheus97/movie-trailer-website.git``` 
 
 2- Get into the folder where the repository was cloned \
 
 3- Ensure that pip is up to date: \
-```$ pip install pip --upgrade``` \
+```$ pip install pip --upgrade``` 
 
 4- Install the requirements described in the file requirements.txt: \
-```$ pip install -r requirements.txt``` \
+```$ pip install -r requirements.txt``` 
 
 5- Get into the project's folder: \
-```$ cd MovieTrailerWebsite``` \
+```$ cd MovieTrailerWebsite``` 
 
 6- Then, run: \
 ```$ python main.py``` 

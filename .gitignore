@@ -1,2 +1,3 @@
-MovieTrailerWebsite/.idea
+MovieTrailerWebsite/.idea/*
 MovieTrailerWebsite/venv
+/.idea

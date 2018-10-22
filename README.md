@@ -5,7 +5,7 @@ This is the first project in the Udacity's "Full Stack Web Developer" Nanodegree
 Python 2.7.9
 
 # Running the project
-In the terminal:\
+In the terminal:
 
 1- Clone the repo to a folder: \
 ```$ git clone https://github.com/reismatheus97/movie-trailer-website.git``` 

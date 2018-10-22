@@ -10,7 +10,7 @@ In the terminal:\
 1- Clone the repo to a folder: \
 ```$ git clone https://github.com/reismatheus97/movie-trailer-website.git``` 
 
-2- Get into the folder where the repository was cloned \
+2- Get into the folder where the repository was cloned 
 
 3- Ensure that pip is up to date: \
 ```$ pip install pip --upgrade``` 

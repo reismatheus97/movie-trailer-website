@@ -1,6 +1,6 @@
 # movie-trailer-website
-It's the first project in the Udacity's "Full Stack Web Developer" Nanodegree.
-This isn't a commercial project and has only academic purposes. 
+It's the first project in the Udacity's "Full Stack Web Developer" Nanodegree. \
+This isn't a commercial project and has only academic purposes. \
 
 # Requirements
 Python 2.7.9
@@ -24,5 +24,15 @@ In the terminal:
 
 6- Then, run: \
 ```$ python main.py``` 
+
+# Used content and credits
+
+The API used to collect the movies and its informations: \
+TMDb: https://themoviedb.org
+
+The original Star Wars site: \
+https://www.starwars.com/
+
+
 
 

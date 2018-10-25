@@ -1,5 +1,6 @@
 # movie-trailer-website
-This is the first project in the Udacity's "Full Stack Web Developer" Nanodegree.
+It's the first project in the Udacity's "Full Stack Web Developer" Nanodegree.
+This isn't a commercial project and has only academic purposes. 
 
 # Requirements
 Python 2.7.9

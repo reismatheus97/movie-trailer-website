@@ -13,7 +13,7 @@ In the terminal:
 
 2- Get into the folder where the repository was cloned 
 
-3- Ensure that pip is up to date: \
+3 - OPTIONAL - Ensure that pip is up to date: \
 ```$ pip install pip --upgrade``` 
 
 4- Install the requirements described in the file requirements.txt: \

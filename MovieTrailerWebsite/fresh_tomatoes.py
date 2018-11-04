@@ -171,7 +171,13 @@ main_page_content = '''
         {movie_tiles}
     </div>
     <hr/>
-    <div style="text-align: center;">
+    <div style="text-align: center;
+                background-color: white;
+                position: fixed;
+                bottom: 0px;
+                left: 0px;
+                right: 0px;"
+    >
         <h2><a href="https://www.starwars.com/">The official Star Wars site.</a></h2>
     </div>
   </body>

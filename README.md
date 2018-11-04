@@ -1,6 +1,6 @@
 # movie-trailer-website
 It's the first project in the Udacity's "Full Stack Web Developer" Nanodegree. \
-This isn't a commercial project and has only academic purposes. \
+This isn't a commercial project and has only academic purposes.
 
 # Requirements
 Python 2.7.9
@@ -13,7 +13,7 @@ In the terminal:
 
 2- Get into the folder where the repository was cloned 
 
-3- Ensure that pip is up to date: \
+3 - OPTIONAL: Ensure that pip is up to date: \
 ```$ pip install pip --upgrade``` 
 
 4- Install the requirements described in the file requirements.txt: \
